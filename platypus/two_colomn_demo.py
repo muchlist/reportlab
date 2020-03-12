@@ -4,8 +4,9 @@ from reportlab.platypus import Paragraph, Frame
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 
+
 def frame_demo():
-    my_canvas =  Canvas("frame-demo.pdf", pagesize=letter)
+    my_canvas = Canvas("frame-demo.pdf", pagesize=letter)
     styles = getSampleStyleSheet()
     normal = styles["Normal"]
     heading = styles["Heading1"]
@@ -25,6 +26,7 @@ def frame_demo():
     right_frame.addFromList(right_flowables, my_canvas)
 
     my_canvas.save()
+
 
 if __name__ == "__main__":
     frame_demo()
