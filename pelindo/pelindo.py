@@ -7,29 +7,6 @@ from reportlab.lib.utils import ImageReader
 #import time
 
 
-def para(text: str) -> Paragraph:
-    """
-    Menginputkan text dan mengembalikan paragraph normal
-    """
-    normal_style = getSampleStyleSheet()["Normal"]
-    return Paragraph(text, normal_style)
-
-
-def scale_image(image: str, desire_width: int) -> Image:
-    """
-    Menginputkan path image dan width dan mengembalikan scaled image
-    """
-
-    img = ImageReader(image)
-    img_width, img_height = img.getSize()
-    aspect = img_height / float(img_width)
-
-    img = Image(image, width=desire_width, height=(
-        desire_width * aspect), hAlign='CENTER')
-
-    return img
-
-
 def pelindo_form():
     # A4 = (210*mm,297*mm)
     doc = SimpleDocTemplate("pelindo.pdf",
@@ -60,27 +37,23 @@ def pelindo_form():
     tbl = Table(data, colWidths=[30*mm, 160*mm])
     tbl.setStyle(tblstyle)
     story.append(tbl)
-    story.append(Spacer(0, 5))
+    story.append(Spacer(0, 10))
 
     """
     -------------------------------------------------------------------------
     DATA DETAIL KONTAINER
     """
     data = [
-        ["KONTAINER", ":", "MRTU 1234567"],
-        ["UKURAN", ":", "20 FEET"],
-        ["TIPE", ":", "TNK"],
-        ["STATUS", ":", "FULL"],
-        ["AKTIFITAS", ":", "MUAT"],
-        ["KAPAL", ":", "MERATUS BORNEO"],
-        ["VOYAGE", ":", "001"],
-        ["INT/DOM", ":", "DOMESTIK"],
-        ["TANGGAL", ":", "01-Jan-2020 09:00"],
+        ["KONTAINER", ": MRTU 1234567", "AKTIFITAS",  ": MUAT"],
+        ["UKURAN", ": 20 FEET", "KAPAL",  ": MERATUS BORNEO"],
+        ["TIPE",  ": TNK", "VOYAGE",  ": 001"],
+        ["STATUS",  ": FULL", "INT/DOM",  ": DOMESTIK"],
+        ["TANGGAL",  ": 01-Jan-2020 09:00", "", ""],
     ]
 
-    tbl = Table(data, colWidths=[40*mm, 20*mm, 130*mm])
+    tbl = Table(data, colWidths=[27*mm, 57*mm, 27*mm, 77*mm])
     story.append(tbl)
-    story.append(Spacer(0, 5))
+    story.append(Spacer(0, 10))
 
     """
     -------------------------------------------------------------------------
@@ -136,6 +109,49 @@ def pelindo_form():
 
     """
     -------------------------------------------------------------------------
+    TANDA TANGAN
+    """
+    img = Image("qr.png", width=80, height=80)
+    data = [
+        ["SHIP'S AGENT", "VESSEL FOREMAN"],
+        [img, img],
+        ["ANTONIUS BOOMERANG", "MUCHLIS"],
+    ]
+    tblstyle = TableStyle([
+        ('BOX', (0, 0), (-1, -1), 0.1, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), "MIDDLE"),
+        ('ALIGN', (0, 0), (-1, -1), "CENTER"),
+    ])
+    tbl = Table(data, colWidths=[95*mm, 95*mm])
+    tbl.setStyle(tblstyle)
+    story.append(tbl)
+    
+    story.append(Spacer(0, 10))
+
+
+
+    """
+    -------------------------------------------------------------------------
+    FOTO HEADER
+    """
+
+    data = [
+        ["FOTO KONTAINER"],
+    ]
+
+    tblstyle = TableStyle([
+        ('GRID', (0, 0), (0, 0), 0.25, colors.black),
+        ('ROWBACKGROUNDS', (0, 0), (0, 0), [colors.lightblue]),
+        ('ALIGN', (0, 0), (0, 0), 'CENTER')
+    ])
+
+    tbl = Table(data, colWidths=[190*mm])
+    tbl.setStyle(tblstyle)
+    story.append(tbl)
+    story.append(Spacer(0, 5))
+
+    """
+    -------------------------------------------------------------------------
     FOTO
     """
     img = scale_image("test.jpg", 55*mm)
@@ -154,25 +170,6 @@ def pelindo_form():
 
     """
     -------------------------------------------------------------------------
-    TANDA TANGAN
-    """
-    img = Image("qr.png", width=80, height=80)
-    data = [
-        ["SHIP'S AGENT", "VESSEL FOREMAN"],
-        [img, img],
-        ["ANTONIUS BOOMERANG", "MUCHLIS"],
-    ]
-    tblstyle = TableStyle([
-        ('BOX', (0, 0), (-1, -1), 0.1, colors.grey),
-        ('VALIGN', (0, 0), (-1, -1), "MIDDLE"),
-        ('ALIGN', (0, 0), (-1, -1), "CENTER"),
-    ])
-    tbl = Table(data, colWidths=[95*mm, 95*mm])
-    tbl.setStyle(tblstyle)
-    story.append(tbl)
-
-    """
-    -------------------------------------------------------------------------
     Disclaimer
     """
     data = [
@@ -181,13 +178,33 @@ def pelindo_form():
      PT. PELABUHAN INDONESIA III""")],
     ]
 
-
-    tbl= Table(data, colWidths=[190*mm])
+    tbl = Table(data, colWidths=[190*mm])
     story.append(tbl)
 
-
-
     doc.build(story)
+
+
+def para(text: str) -> Paragraph:
+    """
+    Menginputkan text dan mengembalikan paragraph normal
+    """
+    normal_style = getSampleStyleSheet()["Normal"]
+    return Paragraph(text, normal_style)
+
+
+def scale_image(image: str, desire_width: int) -> Image:
+    """
+    Menginputkan path image dan width dan mengembalikan scaled image
+    """
+
+    img = ImageReader(image)
+    img_width, img_height = img.getSize()
+    aspect = img_height / float(img_width)
+
+    img = Image(image, width=desire_width, height=(
+        desire_width * aspect), hAlign='CENTER')
+
+    return img
 
 
 if __name__ == "__main__":
